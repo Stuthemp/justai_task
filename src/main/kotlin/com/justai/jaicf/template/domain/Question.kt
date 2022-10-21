@@ -14,16 +14,17 @@ class Question(
     var firstAnswer : String,
     var secondAnswer : String,
     var thirdAnswer : String,
+    @Transient
     var fourthAnswer : String?,
     var rightAnswer : String,
     val question: String
 ) {
     fun mix() {
         var answers: ArrayList<String> = ArrayList<String>()
-        answers.plus(firstAnswer)
-        answers.plus(secondAnswer)
-        answers.plus(thirdAnswer)
-        answers.plus(rightAnswer)
+        answers.add(firstAnswer)
+        answers.add(secondAnswer)
+        answers.add(thirdAnswer)
+        answers.add(rightAnswer)
         answers = answers.shuffled() as ArrayList<String>
         firstAnswer = answers.removeFirst()
         secondAnswer = answers.removeFirst()

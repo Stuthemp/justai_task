@@ -17,9 +17,6 @@ val jaicf = "1.2.2"
 val logback = "1.2.3"
 
 // Main class to run application on heroku. Either JaicpPollerKt, or JaicpServerKt. Will propagate to .jar main class.
-application {
-    mainClassName = "com.justai.jaicf.template.connections.JaicpServerKt"
-}
 
 repositories {
     mavenLocal()
@@ -50,15 +47,12 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
-    shadowJar {
+    bootJar {
         archiveFileName.set("app.jar")
+        mainClass.set("com.justai.jaicf.spring.template.ApplicationKt")
     }
 }
 
 tasks.create("stage") {
-    dependsOn("shadowJar")
-}
-
-tasks.withType<com.justai.jaicf.plugins.jaicp.build.JaicpBuild> {
-    mainClassName.set(application.mainClassName)
+    dependsOn("bootJar")
 }

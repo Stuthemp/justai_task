@@ -17,6 +17,6 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
         use_sql_comments: true
         format_sql: true
-    defer-datasource-initialization: true
-bot:
-  accessToken: ab3ee685-95c3-46ee-9141-cd5c9c5d8c76
+
+  profiles:
+    active: "dev"
