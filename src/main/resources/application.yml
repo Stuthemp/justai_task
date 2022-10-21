@@ -18,4 +18,4 @@ spring:
         use_sql_comments: true
         format_sql: true
 bot:
-  accessToken: d500494c-4deb-4061-9436-90ab3c85829c
+  accessToken: 4bb11fc1-8f97-4d56-a4d3-21aed7ff552a
