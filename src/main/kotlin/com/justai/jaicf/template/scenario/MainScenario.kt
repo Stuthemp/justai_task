@@ -19,7 +19,7 @@ class MainScenario(
 
     var questions : ArrayList<Question> = ArrayList()
     var currentQuestion : Question = Question(1,"","","","","","")
-
+    var points: Int = 0
 
     override val model = createModel {
         state("start") {
@@ -30,41 +30,75 @@ class MainScenario(
             action {
                 questions = questionRepository.findAll() as ArrayList<Question>
                 reactions.run {
-                    sayRandom(
-                        "Hello! How can I help?",
-                        "Hi there! How can I help you?"
+                    say(
+                        "Привет, начнем тест?"
                     )
                     buttons(
-                        "Help me!",
-                        "How are you?",
-                        "What is your name?"
+                        "Начнем!"
                     )
                 }
             }
         }
 
-        state("question") {
+        state("Quiz") {
             activators {
-                intent("Question")
-                regex("/question")
+                regex("Начнем!")
+                intent("Quiz")
             }
 
             action {
-                currentQuestion = questions.removeFirst()
-                currentQuestion.mix()
-                reactions.run {
-                    say(currentQuestion.question)
-                    currentQuestion.fourthAnswer?.let {
-                        buttons(
-                            currentQuestion.firstAnswer,
-                            currentQuestion.secondAnswer,
-                            currentQuestion.thirdAnswer,
-                            it
-                        )
+                questions = questionRepository.findAll() as ArrayList<Question>
+                reactions.go("question")
+            }
+
+            state("stop_game"){
+                activators{
+                    regex("/stop")
+                }
+                action{
+                    reactions.go("/end")
+                }
+            }
+
+            state("question") {
+                activators {
+                    catchAll()
+                    intent("Question")
+                    regex("/question")
+                }
+
+                action {
+                    if(questions.size == 0) {
+                        when(points) {
+                            1 -> reactions.say("Тест окончен, Вы набрали $points балл")
+                            2,3,4 -> reactions.say("Тест окончен, Вы набрали $points балла")
+                            else -> reactions.say("Тест окончен, Вы набрали $points баллов")
+                        }
+                        return@action
+                    }
+                    val answer = request.input
+                    println("answer: " + answer + "correct: " + currentQuestion.rightAnswer)
+                    if(answer == currentQuestion.rightAnswer){
+                        println("Correct")
+                        points++
+                    }
+                    currentQuestion = questions.removeFirst()
+                    currentQuestion.mix()
+                    reactions.run {
+                        say(currentQuestion.question)
+                        currentQuestion.fourthAnswer?.let {
+                            buttons(
+                                currentQuestion.firstAnswer,
+                                currentQuestion.secondAnswer,
+                                currentQuestion.thirdAnswer,
+                                it
+                            )
+                        }
                     }
                 }
             }
         }
+
 
         state("bye") {
             activators {
@@ -76,6 +110,15 @@ class MainScenario(
                     "See you soon!",
                     "Bye-bye!"
                 )
+            }
+        }
+
+        state("end") {
+            activators{
+            }
+            action {
+                context.client.clear()
+                reactions.say("Тест был досрочно закончен")
             }
         }
 
