@@ -30,6 +30,7 @@ class MainScenario(
             }
             action {
                 questions = questionService.findQuestionsSet() as ArrayList<Question>
+                points = 0
                 reactions.run {
                     say(
                         "Привет, начнем тест?"
