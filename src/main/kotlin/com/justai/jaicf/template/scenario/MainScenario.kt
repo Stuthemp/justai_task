@@ -5,8 +5,9 @@ import com.justai.jaicf.activator.caila.caila
 import com.justai.jaicf.model.scenario.Scenario
 import com.justai.jaicf.template.configuration.BotConfiguration
 import com.justai.jaicf.template.domain.Question
-import com.justai.jaicf.template.repository.QuestionRepository
+import com.justai.jaicf.template.service.QuestionService
 import org.springframework.stereotype.Component
+
 
 /**
  * todo Document type MainScenario
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component
 @Component
 class MainScenario(
     private val botConfiguration: BotConfiguration,
-    private val questionRepository: QuestionRepository
+    private val questionService: QuestionService
 ): Scenario {
 
     var questions : ArrayList<Question> = ArrayList()
@@ -28,7 +29,7 @@ class MainScenario(
                 intent("Hello")
             }
             action {
-                questions = questionRepository.findAll() as ArrayList<Question>
+                questions = questionService.findQuestionsSet() as ArrayList<Question>
                 reactions.run {
                     say(
                         "Привет, начнем тест?"
@@ -47,7 +48,6 @@ class MainScenario(
             }
 
             action {
-                questions = questionRepository.findAll() as ArrayList<Question>
                 reactions.go("question")
             }
 
